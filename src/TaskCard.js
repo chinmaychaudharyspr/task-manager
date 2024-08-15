@@ -26,10 +26,6 @@ const TaskCard = ({ task, statuses, users, onSave, onClose }) => {
     setEditableTask({ ...editableTask, [name]: value });
   };
 
-  const handleSave = () => {
-    onSave(editableTask);
-  };
-
   const renderField = (fieldName, fieldValue, inputType, editable) => {
     if(inputType !== "select") {
       return <input
@@ -39,7 +35,6 @@ const TaskCard = ({ task, statuses, users, onSave, onClose }) => {
         name={fieldName}
         value={fieldValue}
         onChange={handleChange}
-        onBlur={handleSave}
         className="mt-1 block w-full border rounded px-2 py-1"
       />
     }
@@ -50,7 +45,6 @@ const TaskCard = ({ task, statuses, users, onSave, onClose }) => {
       name={fieldName}
       value={fieldValue}
       onChange={handleChange}
-      onBlur={handleSave}
       className="mt-1 block w-full border rounded px-2 py-1"
     >
       {fieldName === "status"
@@ -76,7 +70,7 @@ const TaskCard = ({ task, statuses, users, onSave, onClose }) => {
     >
       <button
         onClick={onClose}
-        className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded"
+        className="block ml-auto bg-red-500 text-white px-2 py-1 rounded"
       >
         Close
       </button>
