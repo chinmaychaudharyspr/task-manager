@@ -1,18 +1,23 @@
-import { useState, useEffect } from "react";
+import {useState, useEffect, useMemo} from "react";
 
 import TaskCard from "./TaskCard";
 
-const TaskManager = ({ loadTasks }) => {
+const TaskManager = ({loadTasks}) => {
   const [tasks, setTasks] = useState([]);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [selectedTask, setSelectedTask] = useState();
 
+  const users = useMemo(() => [...new Set(tasks.reduce((acc, task) => {
+    acc.push(task.assignee);
+    return acc;
+  }, []))], [tasks]);
+
+  const statuses = useMemo(() => [...new Set(tasks.reduce((acc, task) => {
+    acc.push(task.status);
+    return acc;
+  }, []))], [tasks]);
+
   const refreshTasks = () => {
-    setIsRefreshing(true);
-    loadTasks().then((o) => {
-      setTasks(o);
-      setIsRefreshing(false);
-    });
+    loadTasks().then((o) => setTasks(o));
   };
 
   useEffect(() => {
@@ -40,12 +45,10 @@ const TaskManager = ({ loadTasks }) => {
                 viewBox="0 0 14 14"
                 data-testid="refresh-icon"
                 data-icon-name="SolidRefresh"
-                data-status={isRefreshing ? "refreshing" : "not-refreshing"}
-                className={`${
-                  isRefreshing ? "animate-spin " : ""
-                }w-4 h-4 fill-current inline-block`}
+                className="animate-spin w-4 h-4 fill-current inline-block"
               >
-                <path d="M11.73 2.265A6.665 6.665 0 006.296.328a6.707 6.707 0 106.74 9.557.84.84 0 00-.754-1.207.816.816 0 00-.738.444 5.026 5.026 0 11-4.552-7.15 4.958 4.958 0 013.538 1.492L9.265 4.729a.838.838 0 00.587 1.434h3.01a.84.84 0 00.837-.838v-3.01a.84.84 0 00-1.433-.595z"></path>
+                <path
+                  d="M11.73 2.265A6.665 6.665 0 006.296.328a6.707 6.707 0 106.74 9.557.84.84 0 00-.754-1.207.816.816 0 00-.738.444 5.026 5.026 0 11-4.552-7.15 4.958 4.958 0 013.538 1.492L9.265 4.729a.838.838 0 00.587 1.434h3.01a.84.84 0 00.837-.838v-3.01a.84.84 0 00-1.433-.595z"></path>
               </svg>
             </button>
             <button className="hidden bg-blue-500 text-white px-4 py-2 rounded">
@@ -67,30 +70,30 @@ const TaskManager = ({ loadTasks }) => {
           {tasks.map((task) => (
             <tr
               key={task.id}
+              data-testid={`task-row-${task.id}`}
               className="hover:bg-gray-200 cursor-pointer"
               onClick={() => setSelectedTask(task)}
             >
-              <td className="py-2 px-4 border-b">{task.id}</td>
-              <td className="py-2 px-4 border-b">{task.title}</td>
-              <td className="py-2 px-4 border-b">{task.status}</td>
-              <td className="py-2 px-4 border-b">{task.assignee}</td>
-              <td className="py-2 px-4 border-b">{task.dueDate}</td>
+              <td className="py-2 px-4 border-b" data-cell-type="id">{task.id}</td>
+              <td className="py-2 px-4 border-b" data-cell-type="title">{task.title}</td>
+              <td className="py-2 px-4 border-b" data-cell-type="status">{task.status}</td>
+              <td className="py-2 px-4 border-b" data-cell-type="assignee">{task.assignee}</td>
+              <td className="py-2 px-4 border-b" data-cell-type="dueDate">{task.dueDate}</td>
             </tr>
           ))}
-          {/* Add more rows as needed */}
           </tbody>
         </table>
       </div>
 
       <div
         className="flex-none transition-all"
-        style={{ width: selectedTask ? 400 : 0 }}
+        style={{width: selectedTask ? 400 : 0}}
       >
         {selectedTask ? (
           <TaskCard
             task={selectedTask}
-            users={[]}
-            statuses={[]}
+            users={users}
+            statuses={statuses}
             onSave={console.log}
             onClose={() => setSelectedTask(undefined)}
           />
