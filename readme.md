@@ -2,4 +2,3 @@
 2. Click on the first task to open a card view. Then, click on refresh. You will notice that the data in the first row of the table updates, but it does not update in the card view. Fix this issue.
 3. Editing a task in the card view should also update the task in the table view.
 4. When a card view for the first task is open, clicking on the second task in the table view should update the card view to show the second task. Currently, it still shows the first task. Fix this issue.
-5. Allow multiple card views to be open simultaneously by clicking on different tasks in the table view. Currently, only one card view is rendered at any given time.
