@@ -18,13 +18,6 @@ describe("1. The refresh icon should spin only when the refresh is in progress."
     new Promise((res) => {
       setTimeout(() => {
         res(tasks);
-        tasks = [
-          {
-            ...tasks[0],
-            status: tasks[0].status === "In Progress" ? "Pending" : "In Progress",
-          },
-          ...tasks.slice(1),
-        ];
       }, 100)
     });
 
@@ -102,9 +95,13 @@ describe("2. When data is refreshed in the table, it should be reflected in the 
     render(<TaskManager loadTasks={loadTasks}/>);
 
     const cellEl = await screen.findByText("Task 1");
+
+    screen.getByText("In Progress");
+
     await user.click(cellEl);
 
-    screen.getByTestId("task-card");
+    let taskCardEl = screen.getByTestId("task-card");
+    expect(taskCardEl.querySelector("#status").dataset.value).toBe("In Progress");
 
     const refreshButtonEl = screen.getByTestId("refresh-button");
     await user.click(refreshButtonEl);
@@ -115,8 +112,7 @@ describe("2. When data is refreshed in the table, it should be reflected in the 
       expect(taskRowEl.querySelector('[data-cell-type="status"]').textContent).toBe("Pending");
     }, {timeout: 200});
 
-    expect(screen.getByLabelText("Status").value).toBe("Pending");
-
+    expect(taskCardEl.querySelector("#status").dataset.value).toBe("Pending");
   });
 });
 

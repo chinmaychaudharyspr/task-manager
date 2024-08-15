@@ -44,6 +44,7 @@ const TaskCard = ({ task, statuses, users, onSave, onClose }) => {
       id={fieldName}
       name={fieldName}
       value={fieldValue}
+      data-value={fieldValue}
       onChange={handleChange}
       className="mt-1 block w-full border rounded px-2 py-1"
     >
@@ -67,6 +68,7 @@ const TaskCard = ({ task, statuses, users, onSave, onClose }) => {
       data-testid="task-card"
       data-entity-type="task-card"
       data-entity-id={editableTask.id}
+      data-task-status={editableTask.status}
     >
       <button
         onClick={onClose}
