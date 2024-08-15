@@ -19,11 +19,11 @@ const properties = [
 ];
 
 const TaskCard = ({ task, statuses, users, onSave, onClose }) => {
-  const [editableTask, setEditableTask] = useState(task);
+  const editableTask = task;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEditableTask({ ...editableTask, [name]: value });
+    onSave({ ...editableTask, [name]: value });
   };
 
   const renderField = (fieldName, fieldValue, inputType, editable) => {

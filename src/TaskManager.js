@@ -4,6 +4,7 @@ import TaskCard from "./TaskCard";
 
 const TaskManager = ({loadTasks}) => {
   const [tasks, setTasks] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
   const [selectedTask, setSelectedTask] = useState();
 
   const users = useMemo(() => [...new Set(tasks.reduce((acc, task) => {
@@ -17,7 +18,8 @@ const TaskManager = ({loadTasks}) => {
   }, []))], [tasks]);
 
   const refreshTasks = () => {
-    loadTasks().then((o) => setTasks(o));
+    setRefreshing(true)
+    loadTasks().then((o) => { setTasks(o); setRefreshing(false)});
   };
 
   useEffect(() => {
@@ -45,7 +47,7 @@ const TaskManager = ({loadTasks}) => {
                 viewBox="0 0 14 14"
                 data-testid="refresh-icon"
                 data-icon-name="SolidRefresh"
-                className="animate-spin w-4 h-4 fill-current inline-block"
+                className={(refreshing ? "animate-spin " : "") + "w-4 h-4 fill-current inline-block"}
               >
                 <path
                   d="M11.73 2.265A6.665 6.665 0 006.296.328a6.707 6.707 0 106.74 9.557.84.84 0 00-.754-1.207.816.816 0 00-.738.444 5.026 5.026 0 11-4.552-7.15 4.958 4.958 0 013.538 1.492L9.265 4.729a.838.838 0 00.587 1.434h3.01a.84.84 0 00.837-.838v-3.01a.84.84 0 00-1.433-.595z"></path>
@@ -72,7 +74,7 @@ const TaskManager = ({loadTasks}) => {
               key={task.id}
               data-testid={`task-row-${task.id}`}
               className="hover:bg-gray-200 cursor-pointer"
-              onClick={() => setSelectedTask(task)}
+              onClick={() => setSelectedTask(task.id)}
             >
               <td className="py-2 px-4 border-b" data-cell-type="id">{task.id}</td>
               <td className="py-2 px-4 border-b" data-cell-type="title">{task.title}</td>
@@ -91,10 +93,10 @@ const TaskManager = ({loadTasks}) => {
       >
         {selectedTask ? (
           <TaskCard
-            task={selectedTask}
+            task={tasks.find(task => task.id === selectedTask)}
             users={users}
             statuses={statuses}
-            onSave={console.log}
+            onSave={(updatedTask) => setTasks(p => p.map(t => t.id === selectedTask ? updatedTask : t))}
             onClose={() => setSelectedTask(undefined)}
           />
         ) : null}
