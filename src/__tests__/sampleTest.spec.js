@@ -35,7 +35,7 @@ describe("1. The refresh icon should spin only when the refresh is in progress."
 
     // jest.useRealTimers()
   });
-  test("should spin when clicked", async () => {
+  test("should spin when refreshing and stop when done", async () => {
     // jest.useFakeTimers();
 
     const user = userEvent.setup();
@@ -96,23 +96,25 @@ describe("2. When data is refreshed in the table, it should be reflected in the 
 
     const cellEl = await screen.findByText("Task 1");
 
-    screen.getByText("In Progress");
+    let taskRowEl = screen.getByTestId(`task-row-${tasks[0].id}`);
+    let taskRowStatusCellEl = taskRowEl.querySelector('[data-cell-type="status"]');
+
+    expect(taskRowStatusCellEl.textContent).toBe("In Progress");
 
     await user.click(cellEl);
 
     let taskCardEl = screen.getByTestId("task-card");
-    expect(taskCardEl.querySelector("#status").dataset.value).toBe("In Progress");
+    let taskCardStatusSelectEl = taskCardEl.querySelector("#status");
+    expect(taskCardStatusSelectEl.dataset.value).toBe("In Progress");
 
     const refreshButtonEl = screen.getByTestId("refresh-button");
     await user.click(refreshButtonEl);
 
-    const taskRowEl = screen.getByTestId(`task-row-${tasks[0].id}`);
-
     await waitFor(() => {
-      expect(taskRowEl.querySelector('[data-cell-type="status"]').textContent).toBe("Pending");
+      expect(taskRowStatusCellEl.textContent).toBe("Pending");
     }, {timeout: 200});
 
-    expect(taskCardEl.querySelector("#status").dataset.value).toBe("Pending");
+    expect(taskCardStatusSelectEl.dataset.value).toBe("Pending");
   });
 });
 
@@ -144,15 +146,19 @@ describe("3. Editing a task in the card view should also update the task in the 
 
     await screen.findByTestId("task-card");
 
+    // In the task card, replace existing content with "hello world"
     await user.type(screen.getByLabelText('Title'), "hello world", {
       initialSelectionStart: 0,
       initialSelectionEnd: screen.getByLabelText('Title').value.length,
     });
     await user.tab();
 
+    // In the task card, the updated value should be "hello world"
     expect(screen.getByLabelText('Title').value).toBe("hello world");
 
     const taskRowEl = await screen.findByTestId(`task-row-${tasks[0].id}`);
+
+    // In the table, the value should be "hello world"
     expect(taskRowEl.querySelector('[data-cell-type="title"]').textContent).toBe("hello world");
   });
 });
@@ -191,10 +197,12 @@ describe("4. Clicking on a task in the table should update the task card view", 
 
     await screen.findByTestId("task-card");
 
+    // the value in the task card
     expect(screen.getByLabelText('Title').value).toBe("Task 1");
 
     await user.click(await screen.findByText("Task 2"));
 
+    // the value in the task card
     expect(screen.getByLabelText('Title').value).toBe("Task 2");
   });
 });
