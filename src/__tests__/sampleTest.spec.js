@@ -147,10 +147,10 @@ describe("3. Editing a task in the card view should also update the task in the 
     await screen.findByTestId("task-card");
 
     // In the task card, replace existing content with "hello world"
-    await user.type(screen.getByLabelText('Title'), "hello world", {
-      initialSelectionStart: 0,
-      initialSelectionEnd: screen.getByLabelText('Title').value.length,
-    });
+    const inputEl = screen.getByLabelText('Title');
+    inputEl.setSelectionRange(0, inputEl.value.length);
+
+    await user.type(inputEl, "hello world");
     await user.tab();
 
     // In the task card, the updated value should be "hello world"
