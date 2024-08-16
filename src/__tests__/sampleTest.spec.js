@@ -7,10 +7,6 @@ import TaskCard from "../TaskCard";
 jest.mock('../CloseButton', () => require('../__mocks__/CloseButton')(jest.fn()));
 global.renderCountArgs = [];
 
-beforeEach(() => {
-  jest.resetModules(); // Clear the module cache
-});
-
 describe("1. The refresh icon should spin only when the refresh is in progress.", () => {
   let tasks = [
     {
