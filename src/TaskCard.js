@@ -1,4 +1,5 @@
 import React, {Fragment, useState} from "react";
+import CloseButton from "./CloseButton";
 
 const properties = [
   { property: "id", label: "ID", editable: false, type: "text" },
@@ -70,12 +71,7 @@ const TaskCard = ({ task, statuses, users, onSave, onClose }) => {
       data-entity-id={editableTask.id}
       data-task-status={editableTask.status}
     >
-      <button
-        onClick={onClose}
-        className="block ml-auto bg-red-500 text-white px-2 py-1 rounded"
-      >
-        Close
-      </button>
+      <CloseButton onClose={onClose} />
       <div
         className="grid justify-items-start items-center"
         style={{
