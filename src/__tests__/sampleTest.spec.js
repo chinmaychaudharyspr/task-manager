@@ -158,6 +158,7 @@ describe("3. Editing a task in the card view should also update the task in the 
     const inputEl = screen.getByLabelText('Title');
     inputEl.setSelectionRange(0, inputEl.value.length);
 
+    await user.clear(inputEl);
     await user.type(inputEl, "hello world");
     await user.tab();
 
@@ -237,12 +238,12 @@ describe("5. Check for unnecessary renders", () => {
 
     task = {...task};
     rerender(<TaskCard task={task} statuses={[]} users={[]}/>);
-/*
-    expect(mockFunction.mock.calls).toEqual([
-      [1],
-      [2],
-    ]);
-*/
+    /*
+        expect(mockFunction.mock.calls).toEqual([
+          [1],
+          [2],
+        ]);
+    */
     expect(global.renderCountArgs).toEqual([
       [1],
       [2],
