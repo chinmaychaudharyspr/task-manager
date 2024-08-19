@@ -1,13 +1,16 @@
 // __mocks__/CloseButton.js
 const React = require('react');
 
-const createCloseButton = (renderCountCb) => function CloseButtonWithRenderCount({onClose}) {
+const RenderCBContext = React.createContext(() => {
+});
+
+function CloseButtonWithRenderCount({onClose}) {
   const renderCount = React.useRef(0);
+  const renderCb = React.useContext(RenderCBContext);
 
   React.useEffect(() => {
     renderCount.current += 1;
-    global.renderCountArgs?.push([renderCount.current]);
-    renderCountCb(renderCount.current);
+    renderCb(renderCount.current);
   });
 
   return (
@@ -20,4 +23,5 @@ const createCloseButton = (renderCountCb) => function CloseButtonWithRenderCount
   );
 };
 
-module.exports = createCloseButton;
+module.exports = CloseButtonWithRenderCount;
+module.exports.RenderCBContextProvider = RenderCBContext.Provider;
