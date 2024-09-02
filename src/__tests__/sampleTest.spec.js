@@ -4,8 +4,7 @@ import "@testing-library/jest-dom";
 import TaskManager from "../TaskManager";
 import TaskCard from "../TaskCard";
 
-jest.mock('../CloseButton', () => require('../__mocks__/CloseButton')(jest.fn()));
-global.renderCountArgs = [];
+jest.mock('../CloseButton', () => require('../__mocks__/CloseButton'));
 
 describe("1. The refresh icon should spin only when the refresh is in progress.", () => {
   let tasks = [
@@ -222,25 +221,22 @@ describe("5. Check for unnecessary renders", () => {
       dueDate: "2024-08-20",
     };
 
-    /*
-  const mockFunction = jest.fn();
-  jest.unmock('../CloseButton'); // Unmock the module
-  jest.mock('../CloseButton', () => require('../__mocks__/CloseButton')(mockFunction));
-*/
+    const RenderCBContextProvider = require('../__mocks__/CloseButton').RenderCBContextProvider;
 
-    global.renderCountArgs = [];
-
-    const {rerender} = render(<TaskCard task={task} statuses={[]} users={[]}/>);
+    const mockFunction = jest.fn();
+    const {rerender} = render(
+      <RenderCBContextProvider value={mockFunction}>
+        <TaskCard task={task} statuses={[]} users={[]}/>
+      </RenderCBContextProvider>
+    );
 
     task = {...task};
-    rerender(<TaskCard task={task} statuses={[]} users={[]}/>);
-    /*
-        expect(mockFunction.mock.calls).toEqual([
-          [1],
-          [2],
-        ]);
-    */
-    expect(global.renderCountArgs).toEqual([
+    rerender(
+      <RenderCBContextProvider value={mockFunction}>
+        <TaskCard task={task} statuses={[]} users={[]}/>
+      </RenderCBContextProvider>
+    );
+    expect(mockFunction.mock.calls).toEqual([
       [1],
       [2],
     ]);
